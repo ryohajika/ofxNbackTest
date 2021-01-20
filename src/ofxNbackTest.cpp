@@ -1,6 +1,5 @@
 //
 //  ofxNbackTest.cpp
-//  Soli20200921-Study01
 //
 //  Created by Ryo Hajika on 2020/09/23.
 //
@@ -8,10 +7,10 @@
 #include "ofxNbackTest.hpp"
 
 ofxNbackTest::ofxNbackTest(){
-    
 }
 ofxNbackTest::~ofxNbackTest(){
-    
+    this->cancelBGThread("intvl_thread");
+    this->cancelBGThread("intvl_break_thread");
 }
 
 void ofxNbackTest::setup(unsigned n_val,
@@ -89,6 +88,8 @@ void ofxNbackTest::start(){
     this->renewCharacter();
 }
 void ofxNbackTest::stop(){
+    this->cancelBGThread("intvl_thread");
+    this->cancelBGThread("intvl_break_thread");
     bIsRunning = false;
 }
 // getter func to check the study running state
@@ -154,18 +155,30 @@ void ofxNbackTest::renewCharacter(){
         resp_state = NBACK_RESPONSE_NONE;
         bIsResponseSubmitted = false;
         
-        std::thread([this](){
+        intvl_thread = std::thread([this](){
             std::this_thread::sleep_for(std::chrono::milliseconds(intvl_ms));
             this->displayCharacter(false);
-        }).detach();
-        std::thread([this](){
+        });
+        threadmap["intvl_thread"] = intvl_thread.native_handle();
+        intvl_break_thread = std::thread([this](){
             std::this_thread::sleep_for(std::chrono::milliseconds(intvl_ms+break_ms));
             this->renewCharacter();
-        }).detach();
+        });
+        threadmap["intvl_break_thread"] = intvl_break_thread.native_handle();
+            
+        intvl_thread.detach();
+        intvl_break_thread.detach();
         
         sw.start();
     }
 }
 void ofxNbackTest::displayCharacter(bool val){
     bCharacterDisplay = val;
+}
+void ofxNbackTest::cancelBGThread(const std::string & tname){
+    ThreadMap::const_iterator it = threadmap.find(tname);
+    if(it != threadmap.end()){
+        pthread_cancel(it->second);
+        threadmap.erase(tname);
+    }
 }

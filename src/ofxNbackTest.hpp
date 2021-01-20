@@ -1,24 +1,42 @@
 //
 //  ofxNbackTest.hpp
-//  Soli20200921-Study01
 //
-//  Created by Ryo Hajika on 2020/09/23.
 //
 
 #pragma once
 
 #include <vector>
+#include <iostream>
 #include <string>
-#include <thread>
 #include <chrono>
+#include <pthread.h>
 
 #include "ofLog.h"
 #include "ofTrueTypeFont.h"
 #include "ofGraphics.h"
 
-#include "UtilityThings.h"
-
 // similar impl as https://www.psytoolkit.org/experiment-library/nback.html
+// followed https://www.bo-yang.net/2017/11/19/cpp-kill-detached-thread
+// for thread management
+
+// https://qiita.com/luftfararen/items/e5bc5b72017d71c73226
+struct StopWatch {
+    StopWatch(){
+        start();
+    }
+    void start(){
+        pre_ = std::chrono::high_resolution_clock::now();
+    }
+    double lap(){ // in MS
+        auto tmp = std::chrono::high_resolution_clock::now();
+        auto dur = tmp - pre_;
+        pre_ = tmp;
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count() / 1000000.0;
+    }
+    
+    std::chrono::high_resolution_clock::time_point pre_;
+};
+
 class ofxNbackTest {
 public:
     ofxNbackTest();
@@ -65,8 +83,11 @@ public:
     }
     
 private:
+    typedef std::unordered_map<std::string, pthread_t> ThreadMap;
+    
     void renewCharacter();
     void displayCharacter(bool val);
+    void cancelBGThread(const std::string & tname);
     
     enum NBACK_RESPONSE_STATE {
         NBACK_RESPONSE_NONE = -999,
@@ -85,6 +106,9 @@ private:
     float percentage;
     
     StopWatch sw;
+    ThreadMap threadmap;
+    std::thread intvl_thread, intvl_break_thread;
+    
     ofRectangle alphabet_bb;
     bool bCharacterDisplay;
     bool bIsRunning;
