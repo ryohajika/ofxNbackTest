@@ -14,6 +14,7 @@
 #include "ofLog.h"
 #include "ofTrueTypeFont.h"
 #include "ofGraphics.h"
+#include "ofEvents.h"
 
 // similar impl as https://www.psytoolkit.org/experiment-library/nback.html
 // followed https://www.bo-yang.net/2017/11/19/cpp-kill-detached-thread
@@ -81,6 +82,9 @@ public:
     int isLastResponseTrue(){
         return (int)resp_state;
     }
+    
+    ofEvent<std::string> new_char_evt;
+    ofEvent<bool> char_hidden_evt;
     
 private:
     typedef std::unordered_map<std::string, pthread_t> ThreadMap;

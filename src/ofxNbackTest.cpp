@@ -150,6 +150,7 @@ void ofxNbackTest::renewCharacter(){
     }
     alphabet_bb = font.getStringBoundingBox(alphabets_buf.back(), 0, 0);
     this->displayCharacter(true);
+    new_char_evt.notify(alphabets_buf.back());
     
     if(bIsRunning){
         resp_state = NBACK_RESPONSE_NONE;
@@ -158,6 +159,8 @@ void ofxNbackTest::renewCharacter(){
         intvl_thread = std::thread([this](){
             std::this_thread::sleep_for(std::chrono::milliseconds(intvl_ms));
             this->displayCharacter(false);
+            bool _b = false;
+            char_hidden_evt.notify(_b);
         });
         threadmap["intvl_thread"] = intvl_thread.native_handle();
         intvl_break_thread = std::thread([this](){
