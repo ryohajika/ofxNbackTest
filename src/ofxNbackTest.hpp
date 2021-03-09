@@ -16,27 +16,11 @@
 #include "ofGraphics.h"
 #include "ofEvents.h"
 
+#include "RHUtils.h"
+
 // similar impl as https://www.psytoolkit.org/experiment-library/nback.html
 // followed https://www.bo-yang.net/2017/11/19/cpp-kill-detached-thread
 // for thread management
-
-// https://qiita.com/luftfararen/items/e5bc5b72017d71c73226
-struct StopWatch {
-    StopWatch(){
-        start();
-    }
-    void start(){
-        pre_ = std::chrono::high_resolution_clock::now();
-    }
-    double lap(){ // in MS
-        auto tmp = std::chrono::high_resolution_clock::now();
-        auto dur = tmp - pre_;
-        pre_ = tmp;
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count() / 1000000.0;
-    }
-    
-    std::chrono::high_resolution_clock::time_point pre_;
-};
 
 class ofxNbackTest {
 public:
@@ -109,7 +93,7 @@ private:
     unsigned break_ms;
     float percentage;
     
-    StopWatch sw;
+    ofxRHUtilities::StopWatch sw;
     ThreadMap threadmap;
     std::thread intvl_thread, intvl_break_thread;
     
