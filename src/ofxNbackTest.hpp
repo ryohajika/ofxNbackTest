@@ -67,6 +67,9 @@ public:
         return (int)resp_state;
     }
     
+    void resizeSize(int n);
+    int getSize();
+    
     ofEvent<std::string> new_char_evt;
     ofEvent<bool> char_hidden_evt;
     
@@ -85,21 +88,21 @@ private:
     
     ofTrueTypeFont font;
     // as https://en.wikipedia.org/wiki/N-back
-    std::string alphabets[8] = {"C", "H", "K", "L", "O", "Q", "R", "T"};
-    const unsigned alphabets_size = 8;
-    std::vector<std::string> alphabets_buf;
-    unsigned n;
-    unsigned intvl_ms;
-    unsigned break_ms;
-    float percentage;
+    std::string _alphabets[8] = {"C", "H", "K", "L", "O", "Q", "R", "T"};
+    const unsigned _alphabets_size = 8;
+    std::vector<std::string> _alphabets_buf;
+    unsigned _n;
+    unsigned _intvl_ms;
+    unsigned _break_ms;
+    float _percentage;
     
     ofxRHUtilities::StopWatch sw;
     ThreadMap threadmap;
-    std::thread intvl_thread, intvl_break_thread;
+    std::thread _intvl_thread, _intvl_break_thread;
     
-    ofRectangle alphabet_bb;
-    bool bCharacterDisplay;
-    bool bIsRunning;
-    bool bIsResponseSubmitted;
-    NBACK_RESPONSE_STATE resp_state;
+    ofRectangle _alphabet_bb;
+    bool _b_character_display;
+    bool _b_running;
+    bool _b_response_submitted;
+    NBACK_RESPONSE_STATE _resp_state;
 };
