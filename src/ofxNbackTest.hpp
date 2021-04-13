@@ -44,13 +44,13 @@ public:
     
     void debugDraw(float x, float y){
         std::string s;
-        s += "DISPLAY_MS: " + std::to_string(intvl_ms) + "\n";
-        s += "RESPONSE_MS: " + std::to_string(break_ms) + "\n";
+        s += "DISPLAY_MS: " + std::to_string(_intvl_ms) + "\n";
+        s += "RESPONSE_MS: " + std::to_string(_break_ms) + "\n";
         s += "CURRENT_QUEUE: ";
-        if(alphabets_buf.size()){
-            for(int i=0; i<alphabets_buf.size(); i++){
-                s += alphabets_buf[i];
-                if(i != alphabets_buf.size() - 1){
+        if(_alphabets_buf.size()){
+            for(int i=0; i<_alphabets_buf.size(); i++){
+                s += _alphabets_buf[i];
+                if(i != _alphabets_buf.size() - 1){
                     s += " / ";
                 }
             }
@@ -61,10 +61,10 @@ public:
     
     bool submitResponse(bool yes_or_no);
     char getLastCharacter(){
-        if(alphabets_buf.size()) return char(alphabets_buf.back()[0]);
+        if(_alphabets_buf.size()) return char(_alphabets_buf.back()[0]);
     }
     int isLastResponseTrue(){
-        return (int)resp_state;
+        return (int)_resp_state;
     }
     
     void resizeSize(int n);
